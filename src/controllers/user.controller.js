@@ -6,7 +6,7 @@ require("dotenv").config();
 const secret_token_key = process.env.TOKEN_SECRET;
 
 const createUser = async (req, res) => {
-  const { name, email, password } = req.body;
+  const { name, email, password, role } = req.body;
   try {
     const isUserThere = await User.findOne({ email });
     if (isUserThere) {
@@ -23,9 +23,25 @@ const createUser = async (req, res) => {
       email,
       password: hashedPassword,
     });
-    const savedNewUser = await newUser.save();
 
-    res.status(201).json({ message: "New User created!", savedNewUser });
+    const newAdmin = new User({
+      name,
+      email,
+      password: hashedPassword,
+      role: "admin",
+    });
+
+    if (role) {
+      const savedNewUser = await newAdmin.save();
+      return res
+        .status(201)
+        .json({ message: "New User created!", savedNewUser });
+    } else {
+      const savedNewUser = await newUser.save();
+      return res
+        .status(201)
+        .json({ message: "New User created!", savedNewUser });
+    }
   } catch (err) {
     res.status(500).json({ message: `Server error : ${err.message}` });
   }
@@ -47,6 +63,10 @@ const loginUser = async (req, res) => {
       return res.status(401).json({ message: "Invalid Credentials!" });
     }
 
+    const adminList = await User.find({ role: "admin" });
+
+    const checkingAdmin = adminList.find((item) => item.email === email);
+
     const token = jwt.sign(
       {
         userId: isUserThere.id,
@@ -62,7 +82,12 @@ const loginUser = async (req, res) => {
     res
       .cookie("token", token)
       .status(200)
-      .json({ message: "Login Successful", data: isUserThere, token });
+      .json({
+        message: "Login Successful",
+        data: isUserThere,
+        token,
+        role: checkingAdmin ? "admin" : "user",
+      });
   } catch (err) {
     res.status(500).json({ message: `Server error : ${err.message}` });
   }
