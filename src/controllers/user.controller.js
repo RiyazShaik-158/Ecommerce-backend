@@ -94,13 +94,20 @@ const loginUser = async (req, res) => {
 };
 
 const getUsers = async (req, res) => {
+  const { userId } = req.id;
+  const checkingAdmin = User.find({ _id: userId, role: "admin" });
+
   try {
     const usersData = await User.find();
     if (usersData.length === 0) {
       res.status(200).json({ message: `No data`, data: [] });
     }
 
-    res.status(200).json({ data: usersData });
+    if (checkingAdmin) {
+      return res.status(200).json({ message: "success", data: usersData });
+    } else {
+      return res.status(403).json({ message: "Access denied" });
+    }
   } catch (err) {
     res.status(500).json({ message: `Server error : ${err.message}` });
   }
