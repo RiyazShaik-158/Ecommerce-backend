@@ -11,10 +11,6 @@ const user_schema = new mongoose.Schema(
       required: [true, "Email is required"],
       unique: true,
     },
-    isAdmin: {
-      type: Boolean,
-      required: false,
-    },
     userName: {
       type: String,
       required: false,
@@ -22,6 +18,11 @@ const user_schema = new mongoose.Schema(
     password: {
       type: String,
       required: [true, "Password is required"],
+    },
+    role: {
+      type: String,
+      enum: ["admin", "user"],
+      required: false,
     },
   },
   { timestamps: true }
