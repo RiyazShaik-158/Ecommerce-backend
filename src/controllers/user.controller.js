@@ -97,9 +97,9 @@ const getUsers = async (req, res) => {
   const { userId } = req;
 
   try {
-    const checkingAdmin = await User.find({ _id: userId, role: "admin" });
+    const obtainedUserData = await User.findOne({ _id: userId });
 
-    if (checkingAdmin.length === 0) {
+    if (obtainedUserData.role !== "admin") {
       return res.status(403).json({ message: "Access denied" });
     }
 
