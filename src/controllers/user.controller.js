@@ -103,7 +103,11 @@ const getUsers = async (req, res) => {
       return res.status(403).json({ message: "Access denied" });
     }
 
-    const usersData = await User.find();
+    const usersData = await User.find({ role: "user" });
+
+    if (usersData.length === 0) {
+      return res.status(200).json({ message: "success", data: [] });
+    }
 
     return res.status(200).json({ message: "success", data: usersData });
   } catch (err) {
