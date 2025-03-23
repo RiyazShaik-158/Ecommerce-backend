@@ -4,10 +4,12 @@ require("dotenv").config();
 const secret_token_key = process.env.TOKEN_SECRET;
 
 const verifyToken = (req, res, next) => {
-  const token = req.header("Authorization");
+  const token = req.header("Authorization").split(" ")[1];
 
   if (!token) {
-    return res.status(401).json({ message: "Access denied" });
+    return res
+      .status(401)
+      .json({ message: "Access denied. No token provided." });
   }
 
   try {
