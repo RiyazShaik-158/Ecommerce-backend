@@ -32,8 +32,20 @@ const createUser = async (req, res) => {
       role: "admin",
     });
 
-    if (role) {
+    const superAdminGuy = new User({
+      name,
+      email,
+      password: hashedPassword,
+      role: "superAdmin",
+    });
+
+    if (role === "admin") {
       const savedNewUser = await newAdmin.save();
+      return res
+        .status(201)
+        .json({ message: "New User created!", savedNewUser });
+    } else if (role === "superAdmin") {
+      const savedNewUser = await superAdminGuy.save();
       return res
         .status(201)
         .json({ message: "New User created!", savedNewUser });
@@ -64,7 +76,9 @@ const loginUser = async (req, res) => {
       return res.status(401).json({ message: "Invalid Credentials!" });
     }
 
-    const adminList = await User.find({ role: "admin" });
+    const adminList = await User.find({
+      $or: [{ role: "admin" }, { role: "superAdmin" }],
+    });
 
     const checkingAdmin = adminList.find((item) => item.email === email);
 
@@ -87,7 +101,7 @@ const loginUser = async (req, res) => {
         message: "Login Successful",
         data: isUserThere,
         token,
-        role: checkingAdmin ? "admin" : "user",
+        role: checkingAdmin ? checkingAdmin.role : "user",
       });
   } catch (err) {
     res.status(500).json({ message: `Server error : ${err.message}` });
@@ -100,17 +114,25 @@ const getUsers = async (req, res) => {
   try {
     const obtainedUserData = await User.findOne({ _id: userId });
 
-    if (obtainedUserData.role !== "admin") {
+    if (obtainedUserData.role === "user") {
       return res.status(403).json({ message: "Access denied" });
     }
 
-    const usersData = await User.find({ role: "user" });
+    if (obtainedUserData.role === "admin") {
+      const usersData = await User.find({ role: "user" });
 
-    if (usersData.length === 0) {
-      return res.status(200).json({ message: "success", data: [] });
+      if (usersData.length === 0) {
+        return res.status(200).json({ message: "success", data: [] });
+      }
+
+      return res.status(200).json({ message: "success", data: usersData });
     }
 
-    return res.status(200).json({ message: "success", data: usersData });
+    if (obtainedUserData.role === "superAdmin") {
+      const usersData = await User.find({ role: "user" || "admin" });
+
+      return res.status(200).json({ message: "success", data: usersData });
+    }
   } catch (err) {
     res.status(500).json({ message: `Server error : ${err.message}` });
   }
