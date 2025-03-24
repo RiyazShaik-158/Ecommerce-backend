@@ -1,7 +1,15 @@
 const Product = require("../models/product.model");
+const User = require("../models/user.model");
 
 const getProducts = async (req, res) => {
   try {
+    const { userId } = req;
+    const isOurUser = await User.findOne({ _id: userId });
+
+    if (!isOurUser) {
+      return res.status(404).json({ message: "User not found!" });
+    }
+
     const productsData = await Product.find();
 
     if (productsData.length === 0) {
