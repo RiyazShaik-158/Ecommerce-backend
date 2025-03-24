@@ -1,6 +1,7 @@
 const express = require("express");
 const connectDB = require("./db/db");
 const UserRouter = require("./routes/user.route");
+const ProductRouter = require("./routes/product.route");
 const cors = require("cors");
 
 const app = express();
@@ -9,6 +10,7 @@ app.use(cors());
 const port = 8900;
 
 app.use("/users", UserRouter);
+app.use("/products", ProductRouter);
 
 const startingServer = () => {
   app.listen(port, () => {

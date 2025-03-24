@@ -87,6 +87,7 @@ const loginUser = async (req, res) => {
         userId: isUserThere.id,
         userName: isUserThere.userName,
         email: isUserThere.email,
+        role: isUserThere.role,
       },
       secret_token_key,
       {
