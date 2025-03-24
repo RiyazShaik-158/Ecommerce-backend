@@ -15,7 +15,7 @@ const getProducts = async (req, res) => {
 };
 
 const createProduct = async (req, res) => {
-  const { userId, role } = req;
+  const { role } = req;
   const { name, category, selling_price, total_price, manufacturer, rating } =
     req.body;
 
