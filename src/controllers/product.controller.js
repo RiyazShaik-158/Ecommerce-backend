@@ -20,7 +20,7 @@ const createProduct = async (req, res) => {
     req.body;
 
   try {
-    if (role !== "admin") {
+    if (role === "user") {
       return res.status(403).json({ message: "Access denied" });
     }
 
@@ -35,17 +35,20 @@ const createProduct = async (req, res) => {
       return res.status(400).json({ message: "Mandatory fields are missing" });
     }
 
-    const obtainedProductDetails = new Product(
+    const obtainedProductDetails = new Product({
       name,
       category,
       selling_price,
       total_price,
       manufacturer,
-      rating
-    );
-    console.log("obtainedProductDetails", obtainedProductDetails);
+      rating,
+    });
 
-    res.send("wait bro");
+    const savingNewProduct = await obtainedProductDetails.save();
+
+    res
+      .status(201)
+      .json({ message: "New Product added", data: savingNewProduct });
   } catch (err) {
     res.status(500).json({ message: `Server error : ${err.message}` });
   }
