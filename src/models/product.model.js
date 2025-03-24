@@ -7,16 +7,12 @@ const product_schema = new mongoose.Schema(
       required: [true, "Please provide Product name"],
     },
     total_price: {
-      type: String | Number,
-      required: [true, "Please provide Total Cost"],
+      type: String,
+      required: [true, "Please provide Product price"],
     },
     selling_price: {
-      type: String | Number,
-      required: false,
-    },
-    offer_price: {
-      type: String | Number,
-      required: false,
+      type: String,
+      required: [true, "Please provide Product price"],
     },
     category: {
       type: String,
