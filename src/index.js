@@ -6,7 +6,7 @@ const cors = require("cors");
 
 const app = express();
 app.use(express.json());
-app.use(cors());
+app.use(cors("http://localhost:5173"));
 const port = 8900;
 
 app.use("/users", UserRouter);
