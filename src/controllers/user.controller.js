@@ -76,11 +76,9 @@ const loginUser = async (req, res) => {
       return res.status(401).json({ message: "Invalid Credentials!" });
     }
 
-    const adminList = await User.find({
-      $or: [{ role: "admin" }, { role: "superAdmin" }],
-    });
-
-    const checkingAdmin = adminList.find((item) => item.email === email);
+    // const adminList = await User.find({
+    //   $or: [{ role: "admin" }, { role: "superAdmin" }],
+    // });
 
     const token = jwt.sign(
       {
@@ -100,9 +98,12 @@ const loginUser = async (req, res) => {
       .status(200)
       .json({
         message: "Login Successful",
-        data: isUserThere,
+        data: {
+          name: isUserThere.name,
+          email: isUserThere.email,
+          role: isUserThere.role,
+        },
         token,
-        role: checkingAdmin ? checkingAdmin.role : "user",
       });
   } catch (err) {
     res.status(500).json({ message: `Server error : ${err.message}` });
