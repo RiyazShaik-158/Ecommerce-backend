@@ -76,10 +76,6 @@ const loginUser = async (req, res) => {
       return res.status(401).json({ message: "Invalid Credentials!" });
     }
 
-    // const adminList = await User.find({
-    //   $or: [{ role: "admin" }, { role: "superAdmin" }],
-    // });
-
     const token = jwt.sign(
       {
         userId: isUserThere.id,

@@ -4,6 +4,12 @@ const User = require("../models/user.model");
 const getProducts = async (req, res) => {
   try {
     const { userId } = req;
+    const { category } = req.params;
+
+    if (category) {
+      return res.status(200).json({ message: "Wait bro" });
+    }
+
     const isOurUser = await User.findOne({ _id: userId });
 
     if (!isOurUser) {
