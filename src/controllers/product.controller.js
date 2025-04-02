@@ -23,6 +23,15 @@ const getProducts = async (req, res) => {
   }
 };
 
+const keys = [
+  "name",
+  "category",
+  "selling_price",
+  "total_price",
+  "manufacturer",
+  "rating",
+];
+
 const createProduct = async (req, res) => {
   const { role } = req;
   const { name, category, selling_price, total_price, manufacturer, rating } =
@@ -32,6 +41,39 @@ const createProduct = async (req, res) => {
     if (role === "user") {
       return res.status(403).json({ message: "Access denied" });
     }
+
+    const returnEmptyValues = (
+      name,
+      category,
+      selling_price,
+      total_price,
+      manufacturer,
+      rating
+    ) => {
+      const tempValues = [
+        name,
+        category,
+        selling_price,
+        total_price,
+        manufacturer,
+        rating,
+      ];
+      const newValuesObj = Object.fromEntries(
+        keys.map((item, index) => [item, tempValues[index]])
+      );
+      return newValuesObj;
+    };
+
+    console.log(
+      returnEmptyValues(
+        name,
+        category,
+        selling_price,
+        total_price,
+        manufacturer,
+        rating
+      )
+    );
 
     if (
       !name ||
