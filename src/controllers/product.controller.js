@@ -1,5 +1,6 @@
 const Product = require("../models/product.model");
 const User = require("../models/user.model");
+const returnValidErrorMessage = require("../utils/validateMongoDBError");
 
 const getProducts = async (req, res) => {
   try {
@@ -23,15 +24,6 @@ const getProducts = async (req, res) => {
   }
 };
 
-const keys = [
-  "name",
-  "category",
-  "selling_price",
-  "total_price",
-  "manufacturer",
-  "rating",
-];
-
 const createProduct = async (req, res) => {
   const { role } = req;
   const { name, category, selling_price, total_price, manufacturer, rating } =
@@ -40,50 +32,6 @@ const createProduct = async (req, res) => {
   try {
     if (role === "user") {
       return res.status(403).json({ message: "Access denied" });
-    }
-
-    const returnEmptyValues = (
-      name,
-      category,
-      selling_price,
-      total_price,
-      manufacturer,
-      rating
-    ) => {
-      const tempValues = [
-        name,
-        category,
-        selling_price,
-        total_price,
-        manufacturer,
-        rating,
-      ];
-      const newValuesObj = Object.fromEntries(
-        keys.map((item, index) => [item, tempValues[index]])
-      );
-      return newValuesObj;
-    };
-
-    console.log(
-      returnEmptyValues(
-        name,
-        category,
-        selling_price,
-        total_price,
-        manufacturer,
-        rating
-      )
-    );
-
-    if (
-      !name ||
-      !category ||
-      !selling_price ||
-      !total_price ||
-      !manufacturer ||
-      !rating
-    ) {
-      return res.status(400).json({ message: "Mandatory fields are missing" });
     }
 
     const obtainedProductDetails = new Product({
@@ -101,7 +49,9 @@ const createProduct = async (req, res) => {
       .status(201)
       .json({ message: "New Product added", data: savingNewProduct });
   } catch (err) {
-    res.status(500).json({ message: `Server error : ${err.message}` });
+    const outputMessages = returnValidErrorMessage(err.errors);
+
+    return res.status(500).json({ message: `${outputMessages}` });
   }
 };
 
