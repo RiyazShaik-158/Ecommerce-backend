@@ -14,6 +14,8 @@ const getProducts = async (req, res) => {
 
     const productsData = await Product.find();
 
+    console.log("obtainedProducts", productsData.length);
+
     if (productsData.length === 0) {
       return res.status(200).json({ message: "Success", data: [] });
     }

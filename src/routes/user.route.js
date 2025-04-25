@@ -8,9 +8,6 @@ const verifyToken = require("../middleware/authMiddleware");
 
 const router = express.Router();
 
-router
-  .post("/", createUser)
-  .post("/auth", loginUser)
-  .get("/", verifyToken, getUsers);
+router.post("/", createUser).get("/", verifyToken, getUsers);
 
 module.exports = router;
