@@ -1,8 +1,14 @@
+const decidePagination = require("../middleware/pagination");
 const Product = require("../models/product.model");
 const User = require("../models/user.model");
 const returnValidErrorMessage = require("../utils/validateMongoDBError");
 
 const getProducts = async (req, res) => {
+  // let page = 1;
+  // let itemsPerPage = 10;
+
+  const { page, pageSize } = req.query;
+  console.log("obtained params", page, pageSize);
   try {
     const { userId } = req;
 
@@ -14,13 +20,16 @@ const getProducts = async (req, res) => {
 
     const productsData = await Product.find();
 
-    console.log("obtainedProducts", productsData.length);
-
     if (productsData.length === 0) {
       return res.status(200).json({ message: "Success", data: [] });
     }
 
-    res.status(200).json({ message: "Success", data: productsData });
+    res
+      .status(200)
+      .json({
+        message: "Success",
+        data: decidePagination(productsData, page, pageSize),
+      });
   } catch (err) {
     res.status(500).json({ message: `Server Error ${err.message}` });
   }

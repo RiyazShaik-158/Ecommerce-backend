@@ -4,6 +4,7 @@ const UserRouter = require("./routes/user.route");
 const ProductRouter = require("./routes/product.route");
 const AuthRouter = require("./routes/auth.route");
 const cors = require("cors");
+const verifyToken = require("./middleware/authMiddleware");
 require("dotenv").config();
 
 const app = express();
@@ -13,7 +14,7 @@ const port = 8900;
 
 app.use("/users", UserRouter);
 app.use("/auth", AuthRouter);
-app.use("/products", ProductRouter);
+app.use("/products", verifyToken, ProductRouter);
 
 const startingServer = () => {
   app.listen(port, () => {
