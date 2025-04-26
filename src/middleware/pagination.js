@@ -13,11 +13,10 @@ const decidePagination = (data, page, perPage) => {
       hasNextPage = false;
     }
 
-    const dataStartIndex =
-      currentPage === 1 ? 0 : (currentPage - 1) * perPage + 1;
+    const dataStartIndex = currentPage === 1 ? 0 : (currentPage - 1) * perPage;
 
     const dataEndIndex =
-      hasNextPage === false ? totalLength + 1 : currentPage * perPage + 1;
+      hasNextPage === false ? totalLength + 1 : currentPage * perPage;
 
     const newDataObject = {
       totalItems: totalLength,
@@ -29,6 +28,8 @@ const decidePagination = (data, page, perPage) => {
       hasPreviousPage:
         currentPage === 1
           ? false
+          : currentPage === numberOfPages
+          ? true
           : totalLength < countTillCurrentPage
           ? false
           : true,

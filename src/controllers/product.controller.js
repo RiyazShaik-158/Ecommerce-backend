@@ -24,12 +24,13 @@ const getProducts = async (req, res) => {
       return res.status(200).json({ message: "Success", data: [] });
     }
 
-    res
-      .status(200)
-      .json({
-        message: "Success",
-        data: decidePagination(productsData, page, pageSize),
-      });
+    res.status(200).json({
+      message: "Success",
+      data:
+        !page && !pageSize
+          ? productsData
+          : decidePagination(productsData, page, pageSize),
+    });
   } catch (err) {
     res.status(500).json({ message: `Server Error ${err.message}` });
   }
