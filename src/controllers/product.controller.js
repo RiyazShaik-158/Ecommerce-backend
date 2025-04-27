@@ -4,9 +4,6 @@ const User = require("../models/user.model");
 const returnValidErrorMessage = require("../utils/validateMongoDBError");
 
 const getProducts = async (req, res) => {
-  // let page = 1;
-  // let itemsPerPage = 10;
-
   const { page, pageSize } = req.query;
   console.log("obtained params", page, pageSize);
   try {
