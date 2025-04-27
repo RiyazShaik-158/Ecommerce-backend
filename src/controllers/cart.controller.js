@@ -38,4 +38,67 @@ const addToCart = async (req, res) => {
   }
 };
 
-module.exports = { addToCart };
+const changeQuantityToAddedItem = async (req, res) => {
+  const product = req.params.id;
+  const { userId } = req;
+  const { quantity } = req.body;
+
+  try {
+    const isUserPresent = await User.findById(userId);
+    if (!isUserPresent) {
+      return res.status(404).send("User not found");
+    }
+
+    const isProductPresent = await Product.findById(product);
+    if (!isProductPresent) {
+      return res.status(404).send("Prodcut not available");
+    }
+
+    const currentCart = await CartModel.findOne({ user: userId, product });
+
+    if (Number(quantity) === currentCart.quantity) {
+      return res.status(200).json({ message: "No changes made" });
+    }
+
+    const updatedCartItem = await CartModel.findOneAndUpdate(
+      { user: userId, product },
+      {
+        $set: {
+          quantity,
+          total_price: currentCart.total_price * 2,
+          selling_price: currentCart.selling_price * 2,
+        },
+      },
+      { new: true }
+    );
+
+    console.log("updatedCartItem", updatedCartItem);
+
+    res.send("Wait bro");
+
+    res
+      .status(200)
+      .json({ message: "Updated item quantity in cart", data: updateProduct });
+  } catch (err) {
+    res.status(500).json({ message: `${err.message}` });
+  }
+};
+
+const getCartItems = async (req, res) => {
+  const { userId } = req;
+  try {
+    const cartItems = await CartModel.find({ user: userId });
+
+    if (cartItems.length === 0) {
+      return res.status(200).json({ message: "No items yet", data: [] });
+    }
+
+    res
+      .status(200)
+      .json({ message: "items fetched successfully", data: cartItems });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+module.exports = { addToCart, changeQuantityToAddedItem, getCartItems };
